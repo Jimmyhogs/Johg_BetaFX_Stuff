@@ -12,7 +12,6 @@ KFLOAT0: 0 to 10; KFLOAT1: -360 to 360
 float width  = (float)p_Width;
 float height = (float)p_Height;
 
-
 float2 center = (float2)(width * 0.5f, height * 0.5f);
 float2 pos = (float2)((float)x, (float)y);
 float2 delta = pos - center;
@@ -34,7 +33,6 @@ float radius = length(scaledDelta);
 float baseRadius = length(center * aspectScale);
 
 float effectiveRadius = fmax(baseRadius, 0.001f);
-
 
 float r = clamp(radius / effectiveRadius, 0.0f, 1.0f);
 
