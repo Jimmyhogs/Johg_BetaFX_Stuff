@@ -1,0 +1,72 @@
+/*
+
+---------------------------------
+
+MegaPhoto Saturation by Jimmyhogs
+
+---------------------------------
+
+*/
+
+kReadIndex = (float2)(x, y);
+kRead();
+
+float3 color = kOutput.xyz;
+
+float maxC = fmax(color.x, fmax(color.y, color.z));
+float minC = fmin(color.x, fmin(color.y, color.z));
+float delta = maxC - minC;
+
+float hue = 0.0f;
+float sat = maxC > 0.000001f ? delta / maxC : 0.0f;
+float val = maxC;
+
+if (delta > 0.000001f)
+{
+    if (maxC == color.x)
+    {
+        hue = (color.y - color.z) / delta;
+        if (hue < 0.0f)
+            hue += 6.0f;
+    }
+    else if (maxC == color.y)
+    {
+        hue = (color.z - color.x) / delta + 2.0f;
+    }
+    else
+    {
+        hue = (color.x - color.y) / delta + 4.0f;
+    }
+
+    hue /= 6.0f;
+}
+
+float K0 = 100.0f;
+float amount = K0 / 200.0f;
+
+float newSat = sat * (1.0f + amount);
+newSat = clamp(newSat, 0.0f, 1.0f);
+
+float h6 = hue * 6.0f;
+float chroma = val * newSat;
+float xValue = chroma * (1.0f - fabs(fmod(h6, 2.0f) - 1.0f));
+float offset = val - chroma;
+
+float3 result;
+
+if (h6 < 1.0f)
+    result = (float3)(chroma, xValue, 0.0f);
+else if (h6 < 2.0f)
+    result = (float3)(xValue, chroma, 0.0f);
+else if (h6 < 3.0f)
+    result = (float3)(0.0f, chroma, xValue);
+else if (h6 < 4.0f)
+    result = (float3)(0.0f, xValue, chroma);
+else if (h6 < 5.0f)
+    result = (float3)(xValue, 0.0f, chroma);
+else
+    result = (float3)(chroma, 0.0f, xValue);
+
+color = result + (float3)(offset);
+
+kOutput.xyz = clamp(color, (float3)(0.0f), (float3)(1.0f));
