@@ -1,0 +1,252 @@
+/*
+---------------------------------------------
+AVS Color Correction by Jimmyhogs
+---------------------------------------------
+
+KFLOAT0 = Brightness
+KFLOAT1 = Temperature
+KFLOAT2 = Contrast
+KFLOAT3 = Saturation
+KFLOAT4 = Gamma
+KFLOAT5 = Hue
+
+---------------------------------------------
+KFLOAT0-4: -100 to 100; KFLOAT 5: -180 to 180
+---------------------------------------------
+*/
+
+kReadIndex = (float2)(x, y);
+kRead();
+
+float3 color = kOutput.xyz;
+
+float brightness = kFloat0 / 100.0f;
+
+color += (float3)(brightness * 0.39215686f);
+
+float temperature = clamp(
+    kFloat1,
+    -100.0f,
+    100.0f
+) / 100.0f;
+
+float3 originalTempColor = color;
+float3 adjustedTempColor;
+
+if (temperature < 0.0f)
+{
+    // Preserve existing -100 calibration
+    adjustedTempColor = originalTempColor
+        + (float3)(
+            -0.117647f,
+            -0.019608f,
+             0.078431f
+        );
+
+    color = originalTempColor
+        + (adjustedTempColor - originalTempColor)
+        * (-temperature);
+}
+else
+{
+    // Recalibrated +100 endpoint
+    // Based on corrected AVS LUT
+    adjustedTempColor = originalTempColor
+        + (float3)(
+             0.117647f,
+             0.019608f,
+            -0.078431f
+        );
+
+    color = originalTempColor
+        + (adjustedTempColor - originalTempColor)
+        * temperature;
+}
+
+float contrastInput = clamp(
+    kFloat2,
+    -100.0f,
+    100.0f
+);
+
+float contrast;
+
+if (contrastInput < 0.0f)
+{
+    contrast = 1.0f + contrastInput / 200.0f;
+}
+else
+{
+    contrast = 1.0f + contrastInput / 10.0f;
+}
+
+color = (color - (float3)(0.5f)) * contrast
+      + (float3)(0.5f);
+
+color = clamp(
+    color,
+    (float3)(0.0f),
+    (float3)(1.0f)
+);
+
+float highest = fmax(
+    color.x,
+    fmax(color.y, color.z)
+);
+
+float lowest = fmin(
+    color.x,
+    fmin(color.y, color.z)
+);
+
+float midpoint = (highest + lowest) * 0.5f;
+float chroma = highest - lowest;
+
+float amount = 1.0f + kFloat3 / 100.0f;
+
+float maxChroma = fmin(
+    highest + lowest,
+    2.0f - highest - lowest
+);
+
+if (chroma > 0.000001f)
+{
+    float scale = fmin(
+        amount,
+        maxChroma / chroma
+    );
+
+    color = (float3)(midpoint)
+          + (color - (float3)(midpoint)) * scale;
+}
+
+float gammaStrength;
+
+if (kFloat4 < 0.0f)
+{
+    gammaStrength = -1.0f;
+}
+else
+{
+    gammaStrength = -4.0f;
+}
+
+float gammaValue = exp2(
+    gammaStrength * kFloat4 / 100.0f
+);
+
+color = pow(
+    fmax(color, (float3)(0.0f)),
+    (float3)(gammaValue)
+);
+
+float maxColor = fmax(
+    color.x,
+    fmax(color.y, color.z)
+);
+
+float minColor = fmin(
+    color.x,
+    fmin(color.y, color.z)
+);
+
+float delta = maxColor - minColor;
+
+float hue = 0.0f;
+
+float hsvSaturation = (maxColor > 0.0f)
+    ? delta / maxColor
+    : 0.0f;
+
+if (delta > 0.000001f)
+{
+    if (maxColor == color.x)
+    {
+        hue = (color.y - color.z) / delta;
+
+        if (hue < 0.0f)
+            hue += 6.0f;
+    }
+    else if (maxColor == color.y)
+    {
+        hue = (color.z - color.x) / delta + 2.0f;
+    }
+    else
+    {
+        hue = (color.x - color.y) / delta + 4.0f;
+    }
+
+    hue /= 6.0f;
+}
+
+hue += kFloat5 / 360.0f;
+hue -= floor(hue);
+
+float h6 = hue * 6.0f;
+
+float hueChroma = maxColor * hsvSaturation;
+
+float secondary = hueChroma * (
+    1.0f - fabs(fmod(h6, 2.0f) - 1.0f)
+);
+
+float offset = maxColor - hueChroma;
+
+float3 hsvColor;
+
+if (h6 < 1.0f)
+{
+    hsvColor = (float3)(
+        hueChroma,
+        secondary,
+        0.0f
+    );
+}
+else if (h6 < 2.0f)
+{
+    hsvColor = (float3)(
+        secondary,
+        hueChroma,
+        0.0f
+    );
+}
+else if (h6 < 3.0f)
+{
+    hsvColor = (float3)(
+        0.0f,
+        hueChroma,
+        secondary
+    );
+}
+else if (h6 < 4.0f)
+{
+    hsvColor = (float3)(
+        0.0f,
+        secondary,
+        hueChroma
+    );
+}
+else if (h6 < 5.0f)
+{
+    hsvColor = (float3)(
+        secondary,
+        0.0f,
+        hueChroma
+    );
+}
+else
+{
+    hsvColor = (float3)(
+        hueChroma,
+        0.0f,
+        secondary
+    );
+}
+
+color = hsvColor + (float3)(offset);
+
+kOutput.xyz = clamp(
+    color,
+    (float3)(0.0f),
+    (float3)(1.0f)
+);
