@@ -1,7 +1,6 @@
 /*
----------------------------------------------
-AVS Color Correction by Jimmyhogs
 
+AVS Color Correction by Jimmyhogs
 
 KFLOAT0 = Brightness
 KFLOAT1 = Temperature
@@ -10,9 +9,8 @@ KFLOAT3 = Saturation
 KFLOAT4 = Gamma
 KFLOAT5 = Hue
 
-
 KFLOAT0-4: -100 to 100; KFLOAT 5: -180 to 180
----------------------------------------------
+
 */
 
 kReadIndex = (float2)(x, y);
