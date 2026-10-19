@@ -5,9 +5,9 @@ For any of these scripts, make sure you click on raw, then press ctrl+a (or sele
 
 The OFX plugin can be downloaded here: https://github.com/boundless-beta/openfx-betafx/releases
 
-These actions below will cause Vegas Pro to crash
-
 -------------------------------------------------------------------
+
+These actions below will cause Vegas Pro to crash
 
 1. Making LUT's with this plugin inside of the effect chain
 
