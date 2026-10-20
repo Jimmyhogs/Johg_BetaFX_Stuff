@@ -19,3 +19,8 @@ that has the plugin in there, then save and reopen Vegas Pro)
 (make sure "Adjust Size and Quality for Optimal Playback" is off)
 (if you do change the preview settings, click away from the frame
 that has the plugin in there, then save and reopen Vegas Pro)
+
+4. When you open up Vegas Pro and select the plugin, it's best
+to drag the (Default) preset as it is less prone to crashing
+as opposed to dragging one of the presets you made. You can
+select your preset on the dropdown menu after you drag it in.
