@@ -1,0 +1,119 @@
+/*
+=========================
+AVS Mirror by Jimmyhogs 
+=========================
+KFLOAT0 = Type (0-3)
+(Bottom, Top, Left, Right)
+KFLOAT1 = Level (0-100)
+=========================
+*/
+
+float width = (float)p_Width;
+float height = (float)p_Height;
+
+float maxX = fmax(width - 1.0f, 1.0f);
+float maxY = fmax(height - 1.0f, 1.0f);
+
+int direction = clamp((int)floor(kFloat0 + 0.5f), 0, 3);
+
+float level = clamp(kFloat1 / 100.0f, 0.0f, 1.0f);
+
+if (direction == 0 || direction == 3) {
+    level = 1.0f - level;
+}
+
+float blurStrength = 14.0f / 50.0f;
+
+float splitX = fmin(level * width, maxX);
+float splitY = fmin((1.0f - level) * height, maxY);
+
+float2 pos = (float2)((float)x, (float)y);
+float2 samplePos = pos;
+
+float progress = 0.0f;
+float2 blurAxis = (float2)(0.0f, 0.0f);
+
+if (direction == 0) {
+    if (pos.y < splitY) {
+        float span = fmax(splitY, 0.0001f);
+
+        progress = (splitY - pos.y) / span;
+        samplePos.y = splitY + progress * (maxY - splitY);
+
+        blurAxis.x = 1.0f;
+    }
+}
+else if (direction == 1) {
+    if (pos.y > splitY) {
+        float span = fmax(maxY - splitY, 0.0001f);
+
+        progress = (pos.y - splitY) / span;
+        samplePos.y = splitY - progress * splitY;
+
+        blurAxis.x = 1.0f;
+    }
+}
+else if (direction == 2) {
+    if (pos.x < splitX) {
+        float span = fmax(splitX, 0.0001f);
+
+        progress = (splitX - pos.x) / span;
+        samplePos.x = splitX + progress * (maxX - splitX);
+
+        blurAxis.y = 1.0f;
+    }
+}
+else {
+    if (pos.x > splitX) {
+        float span = fmax(maxX - splitX, 0.0001f);
+
+        progress = (pos.x - splitX) / span;
+        samplePos.x = splitX - progress * splitX;
+
+        blurAxis.y = 1.0f;
+    }
+}
+
+samplePos.x = clamp(samplePos.x, 0.0f, maxX);
+samplePos.y = clamp(samplePos.y, 0.0f, maxY);
+
+progress = clamp(progress, 0.0f, 1.0f);
+
+if (progress <= 0.0f) {
+    kReadIndex = samplePos;
+    kRead();
+}
+else {
+    float blurRadius = progress * 48.0f * blurStrength;
+
+    float axisLength = (direction <= 1) ? maxX : maxY;
+    float effectiveRadius = fmin(blurRadius, axisLength);
+
+    int sampleCount = (int)ceil(effectiveRadius / 0.5f);
+    sampleCount = clamp(sampleCount, 1, 512);
+
+    float actualStep = effectiveRadius / (float)sampleCount;
+
+    float4 total = (float4)(0.0f);
+    float totalWeight = 0.0f;
+
+    for (int i = -sampleCount; i <= sampleCount; i++) {
+        float distance = (float)i * actualStep;
+        float normalizedDistance = distance / fmax(effectiveRadius, 0.0001f);
+
+        float weight = exp(-2.0f * normalizedDistance * normalizedDistance);
+
+        float2 readPos = samplePos + blurAxis * distance;
+
+        readPos.x = clamp(readPos.x, 0.0f, maxX);
+        readPos.y = clamp(readPos.y, 0.0f, maxY);
+
+        kReadIndex = readPos;
+        kRead();
+
+        total += kOutput * weight;
+        totalWeight += weight;
+    }
+
+    kOutput = total / fmax(totalWeight, 0.0001f);
+}
