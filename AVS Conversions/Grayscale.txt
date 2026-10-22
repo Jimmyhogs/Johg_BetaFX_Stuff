@@ -2,21 +2,21 @@
 =========================
 AVS Grayscale by Jimmyhogs 
 =========================
-kFloat0 = Grayscale (0-100)
-kFloat1 = Desaturate (0-100) 
-kFloat2 = Shape (0-3)
+KFLOAT0 = Grayscale (0-100)
+KFLOAT1 = Desaturate (0-100) 
+KFLOAT2 = Shape (0-3)
 (None; Rectangle; Ellipse; Polygon)
 Coordinates System Range: (0.0-1.0)
-kFloat3  = Top Left X (Default: 0.1)
-kFloat4  = Top Left Y (Default: 0.9)
-kFloat5  = Top Right X (Default: 0.9)
-kFloat6  = Top Right Y (Default: 0.9)
-kFloat7  = Polygon Top X (Default: 0.45)
-kFloat8  = Polygon Top Y (Default: 0.9)
-kFloat9  = Bottom Left X (Default: 0.1)
-kFloat10 = Bottom Left Y (Default: 0.1)
-kFloat11 = Bottom Right X (Default: 0.9)
-kFloat12 = Bottom Right Y (Default: 0.1)
+KFLOAT3  = Top Left X (Default: 0.1)
+KFLOAT4  = Top Left Y (Default: 0.9)
+KFLOAT5  = Top Right X (Default: 0.9)
+KFLOAT6  = Top Right Y (Default: 0.9)
+KFLOAT7  = Polygon Top X (Default: 0.45)
+KFLOAT8  = Polygon Top Y (Default: 0.9)
+KFLOAT9  = Bottom Left X (Default: 0.1)
+KFLOAT10 = Bottom Left Y (Default: 0.1)
+KFLOAT11 = Bottom Right X (Default: 0.9)
+KFLOAT12 = Bottom Right Y (Default: 0.1)
 =========================
 */
 
