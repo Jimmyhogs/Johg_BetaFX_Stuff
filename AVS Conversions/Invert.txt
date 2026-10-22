@@ -28,12 +28,6 @@ float4 original = kOutput;
 
 float invertAmount = clamp(kFloat0, 0.0f, 1.0f);
 
-float3 inverted = 1.0f - original.xyz;
-
-float3 color =
-    original.xyz +
-    (inverted - original.xyz) * invertAmount;
-
 int shape = (int)floor(kFloat5 + 0.5f);
 
 float width = (float)p_Width;
@@ -232,7 +226,16 @@ else if (shape == 3)
     }
 }
 
-kOutput.x = clamp(color.x, 0.0f, 1.0f);
-kOutput.y = clamp(color.y, 0.0f, 1.0f);
-kOutput.z = clamp(color.z, 0.0f, 1.0f);
-kOutput.w = original.w * mask;
+float3 inverted = 1.0f - original.xyz;
+
+float effectiveAmount = invertAmount * mask;
+
+float3 finalColor =
+    original.xyz +
+    (inverted - original.xyz) * effectiveAmount;
+
+kOutput.x = clamp(finalColor.x, 0.0f, 1.0f);
+kOutput.y = clamp(finalColor.y, 0.0f, 1.0f);
+kOutput.z = clamp(finalColor.z, 0.0f, 1.0f);
+kOutput.w = original.w;
+
