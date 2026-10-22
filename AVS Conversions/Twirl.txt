@@ -1,6 +1,6 @@
 /* 
 =========================
-Twirl by Jimmyhogs
+AVS Twirl by Jimmyhogs
 =========================
 KFLOAT0 = Twirl Degree
 KFLOAT1 = Twirl Angle
