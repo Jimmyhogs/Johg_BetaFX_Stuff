@@ -1,0 +1,45 @@
+/*
+=========================
+AVS Grayscale by Jimmyhogs
+=========================
+KFLOAT0 = Grayscale
+KFLOAT1 = Desaturate
+========================= 
+KFLOAT0-1: 0 to 1
+=========================
+*/
+
+kReadIndex = (float2)((float)x, (float)y);
+kRead();
+
+float4 original = kOutput;
+
+float r = original.x;
+float g = original.y;
+float b = original.z;
+
+float amount0 = clamp(kFloat0, 0.0f, 1.0f);
+float amount1 = clamp(kFloat1, 0.0f, 1.0f);
+
+float gray0 =
+    r * 0.299f +
+    g * 0.587f +
+    b * 0.114f;
+
+float gray1 = (r + g + b) / 3.0f;
+
+float3 color = (float3)(r, g, b);
+
+color = color +
+    ((float3)(gray0, gray0, gray0) - color)
+    * amount0;
+
+color = color +
+    ((float3)(gray1, gray1, gray1) - color)
+    * amount1;
+
+kOutput.x = clamp(color.x, 0.0f, 1.0f);
+kOutput.y = clamp(color.y, 0.0f, 1.0f);
+kOutput.z = clamp(color.z, 0.0f, 1.0f);
+
+kOutput.w = original.w;
