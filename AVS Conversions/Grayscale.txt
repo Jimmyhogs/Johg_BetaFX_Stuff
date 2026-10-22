@@ -4,19 +4,19 @@ AVS Grayscale by Jimmyhogs
 =========================
 KFLOAT0 = Grayscale (0-100)
 KFLOAT1 = Desaturate (0-100) 
-KFLOAT2 = Shape (0-3)
+KFLOAT5 = Shape (0-3)
 (None; Rectangle; Ellipse; Polygon)
 Coordinates System Range: (0.0-1.0)
-KFLOAT3  = Top Left X (Default: 0.1)
-KFLOAT4  = Top Left Y (Default: 0.9)
-KFLOAT5  = Top Right X (Default: 0.9)
-KFLOAT6  = Top Right Y (Default: 0.9)
-KFLOAT7  = Polygon Top X (Default: 0.45)
-KFLOAT8  = Polygon Top Y (Default: 0.9)
-KFLOAT9  = Bottom Left X (Default: 0.1)
-KFLOAT10 = Bottom Left Y (Default: 0.1)
-KFLOAT11 = Bottom Right X (Default: 0.9)
-KFLOAT12 = Bottom Right Y (Default: 0.1)
+KFLOAT6 = Top Left X (Default: 0.1)
+KFLOAT7 = Top Left Y (Default: 0.9)
+KFLOAT8 = Top Right X (Default: 0.9)
+KFLOAT9 = Top Right Y (Default: 0.9)
+KFLOAT10 = Polygon Top X (Default: 0.45)
+KFLOAT11 = Polygon Top Y (Default: 0.9)
+KFLOAT12 = Bottom Left X (Default: 0.1)
+KFLOAT13 = Bottom Left Y (Default: 0.1)
+KFLOAT14 = Bottom Right X (Default: 0.9)
+KFLOAT15 = Bottom Right Y (Default: 0.1)
 =========================
 */
 
@@ -29,7 +29,7 @@ float3 rgb = original.xyz;
 float amount0 = clamp(kFloat0, 0.0f, 1.0f);
 float amount1 = clamp(kFloat1, 0.0f, 1.0f);
 
-int shape = (int)floor(kFloat2 + 0.5f);
+int shape = (int)floor(kFloat5 + 0.5f);
 
 float gray0 =
     rgb.x * 0.299f +
@@ -44,6 +44,7 @@ float3 color = rgb;
 color +=
     ((float3)(gray0, gray0, gray0) - color)
     * amount0;
+
 color +=
     ((float3)(gray1, gray1, gray1) - color)
     * amount1;
@@ -57,28 +58,28 @@ float v = ((float)y + 0.5f) / height;
 float2 P = (float2)(u, v);
 
 float2 TL = (float2)(
-    clamp(kFloat3, 0.0f, 1.0f),
-    clamp(kFloat4, 0.0f, 1.0f)
+    clamp(kFloat6, 0.0f, 1.0f),
+    clamp(kFloat7, 0.0f, 1.0f)
 );
 
 float2 TR = (float2)(
-    clamp(kFloat5, 0.0f, 1.0f),
-    clamp(kFloat6, 0.0f, 1.0f)
+    clamp(kFloat8, 0.0f, 1.0f),
+    clamp(kFloat9, 0.0f, 1.0f)
 );
 
 float2 TOP = (float2)(
-    clamp(kFloat7, 0.0f, 1.0f),
-    clamp(kFloat8, 0.0f, 1.0f)
+    clamp(kFloat10, 0.0f, 1.0f),
+    clamp(kFloat11, 0.0f, 1.0f)
 );
 
 float2 BL = (float2)(
-    clamp(kFloat9, 0.0f, 1.0f),
-    clamp(kFloat10, 0.0f, 1.0f)
+    clamp(kFloat12, 0.0f, 1.0f),
+    clamp(kFloat13, 0.0f, 1.0f)
 );
 
 float2 BR = (float2)(
-    clamp(kFloat11, 0.0f, 1.0f),
-    clamp(kFloat12, 0.0f, 1.0f)
+    clamp(kFloat14, 0.0f, 1.0f),
+    clamp(kFloat15, 0.0f, 1.0f)
 );
 
 float mask = 1.0f;
@@ -224,7 +225,7 @@ else if (shape == 3)
 
     float cross2 =
         (C.x - B.x) * (P.y - B.y) -
-        (C.y - B.y) * (P.x - B.x);
+        (C.y - B.y) * (P.x - C.x);
 
     float cross3 =
         (A.x - C.x) * (P.y - C.y) -
