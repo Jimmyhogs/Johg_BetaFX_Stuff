@@ -1,11 +1,22 @@
 /*
 =========================
-AVS Grayscale by Jimmyhogs
+AVS Grayscale by Jimmyhogs 
 =========================
-KFLOAT0 = Grayscale
-KFLOAT1 = Desaturate
-========================= 
-KFLOAT0-1: 0 to 1
+kFloat0 = Grayscale (0-100)
+kFloat1 = Desaturate (0-100) 
+kFloat2 = Shape (0-3)
+(None; Rectangle; Ellipse; Polygon)
+Coordinates System Range: (0.0-1.0)
+kFloat3  = Top Left X (Default: 0.1)
+kFloat4  = Top Left Y (Default: 0.9)
+kFloat5  = Top Right X (Default: 0.9)
+kFloat6  = Top Right Y (Default: 0.9)
+kFloat7  = Polygon Top X (Default: 0.45)
+kFloat8  = Polygon Top Y (Default: 0.9)
+kFloat9  = Bottom Left X (Default: 0.1)
+kFloat10 = Bottom Left Y (Default: 0.1)
+kFloat11 = Bottom Right X (Default: 0.9)
+kFloat12 = Bottom Right Y (Default: 0.1)
 =========================
 */
 
@@ -13,33 +24,237 @@ kReadIndex = (float2)((float)x, (float)y);
 kRead();
 
 float4 original = kOutput;
-
-float r = original.x;
-float g = original.y;
-float b = original.z;
+float3 rgb = original.xyz;
 
 float amount0 = clamp(kFloat0, 0.0f, 1.0f);
 float amount1 = clamp(kFloat1, 0.0f, 1.0f);
 
+int shape = (int)floor(kFloat2 + 0.5f);
+
 float gray0 =
-    r * 0.299f +
-    g * 0.587f +
-    b * 0.114f;
+    rgb.x * 0.299f +
+    rgb.y * 0.587f +
+    rgb.z * 0.114f;
 
-float gray1 = (r + g + b) / 3.0f;
+float gray1 =
+    (rgb.x + rgb.y + rgb.z) / 3.0f;
 
-float3 color = (float3)(r, g, b);
+float3 color = rgb;
 
-color = color +
+color +=
     ((float3)(gray0, gray0, gray0) - color)
     * amount0;
-
-color = color +
+color +=
     ((float3)(gray1, gray1, gray1) - color)
     * amount1;
 
-kOutput.x = clamp(color.x, 0.0f, 1.0f);
-kOutput.y = clamp(color.y, 0.0f, 1.0f);
-kOutput.z = clamp(color.z, 0.0f, 1.0f);
+float width = (float)p_Width;
+float height = (float)p_Height;
+
+float u = ((float)x + 0.5f) / width;
+float v = ((float)y + 0.5f) / height;
+
+float2 P = (float2)(u, v);
+
+float2 TL = (float2)(
+    clamp(kFloat3, 0.0f, 1.0f),
+    clamp(kFloat4, 0.0f, 1.0f)
+);
+
+float2 TR = (float2)(
+    clamp(kFloat5, 0.0f, 1.0f),
+    clamp(kFloat6, 0.0f, 1.0f)
+);
+
+float2 TOP = (float2)(
+    clamp(kFloat7, 0.0f, 1.0f),
+    clamp(kFloat8, 0.0f, 1.0f)
+);
+
+float2 BL = (float2)(
+    clamp(kFloat9, 0.0f, 1.0f),
+    clamp(kFloat10, 0.0f, 1.0f)
+);
+
+float2 BR = (float2)(
+    clamp(kFloat11, 0.0f, 1.0f),
+    clamp(kFloat12, 0.0f, 1.0f)
+);
+
+float mask = 1.0f;
+
+if (shape == 0)
+{
+    mask = 1.0f;
+}
+
+else if (shape == 1)
+{
+
+    float2 A = TL;
+    float2 B = TR;
+    float2 C = BR;
+
+    float cross1 =
+        (B.x - A.x) * (P.y - A.y) -
+        (B.y - A.y) * (P.x - A.x);
+
+    float cross2 =
+        (C.x - B.x) * (P.y - B.y) -
+        (C.y - B.y) * (P.x - B.x);
+
+    float cross3 =
+        (A.x - C.x) * (P.y - C.y) -
+        (A.y - C.y) * (P.x - C.x);
+
+    float area1 =
+        (B.x - A.x) * (C.y - A.y) -
+        (B.y - A.y) * (C.x - A.x);
+
+    int inside1 = 0;
+
+    if (fabs(area1) > 0.0000001f)
+    {
+        inside1 =
+            (cross1 >= 0.0f &&
+             cross2 >= 0.0f &&
+             cross3 >= 0.0f) ||
+            (cross1 <= 0.0f &&
+             cross2 <= 0.0f &&
+             cross3 <= 0.0f);
+    }
+
+    A = TL;
+    B = BR;
+    C = BL;
+
+    cross1 =
+        (B.x - A.x) * (P.y - A.y) -
+        (B.y - A.y) * (P.x - A.x);
+
+    cross2 =
+        (C.x - B.x) * (P.y - B.y) -
+        (C.y - B.y) * (P.x - B.x);
+
+    cross3 =
+        (A.x - C.x) * (P.y - C.y) -
+        (A.y - C.y) * (P.x - C.x);
+
+    float area2 =
+        (B.x - A.x) * (C.y - A.y) -
+        (B.y - A.y) * (C.x - A.x);
+
+    int inside2 = 0;
+
+    if (fabs(area2) > 0.0000001f)
+    {
+        inside2 =
+            (cross1 >= 0.0f &&
+             cross2 >= 0.0f &&
+             cross3 >= 0.0f) ||
+            (cross1 <= 0.0f &&
+             cross2 <= 0.0f &&
+             cross3 <= 0.0f);
+    }
+
+    mask = (inside1 || inside2)
+        ? 1.0f : 0.0f;
+}
+
+else if (shape == 2)
+{
+    float minX = fmin(
+        fmin(TL.x, TR.x),
+        fmin(BL.x, BR.x)
+    );
+
+    float maxX = fmax(
+        fmax(TL.x, TR.x),
+        fmax(BL.x, BR.x)
+    );
+
+    float minY = fmin(
+        fmin(TL.y, TR.y),
+        fmin(BL.y, BR.y)
+    );
+
+    float maxY = fmax(
+        fmax(TL.y, TR.y),
+        fmax(BL.y, BR.y)
+    );
+
+    float2 center = (float2)(
+        (minX + maxX) * 0.5f,
+        (minY + maxY) * 0.5f
+    );
+
+    float radiusX = (maxX - minX) * 0.5f;
+    float radiusY = (maxY - minY) * 0.5f;
+
+    mask = 0.0f;
+
+    if (radiusX > 0.000001f &&
+        radiusY > 0.000001f)
+    {
+        float dx =
+            (P.x - center.x) / radiusX;
+
+        float dy =
+            (P.y - center.y) / radiusY;
+
+        float distance =
+            dx * dx + dy * dy;
+
+        mask = distance <= 1.0f
+            ? 1.0f : 0.0f;
+    }
+}
+
+else if (shape == 3)
+{
+    float2 A = TOP;
+
+    float2 B = BL;
+
+    float2 C = BR;
+
+    float cross1 =
+        (B.x - A.x) * (P.y - A.y) -
+        (B.y - A.y) * (P.x - A.x);
+
+    float cross2 =
+        (C.x - B.x) * (P.y - B.y) -
+        (C.y - B.y) * (P.x - B.x);
+
+    float cross3 =
+        (A.x - C.x) * (P.y - C.y) -
+        (A.y - C.y) * (P.x - C.x);
+
+    float area =
+        (B.x - A.x) * (C.y - A.y) -
+        (B.y - A.y) * (C.x - A.x);
+
+    mask = 0.0f;
+
+    if (fabs(area) > 0.0000001f)
+    {
+        if ((cross1 >= 0.0f &&
+             cross2 >= 0.0f &&
+             cross3 >= 0.0f) ||
+            (cross1 <= 0.0f &&
+             cross2 <= 0.0f &&
+             cross3 <= 0.0f))
+        {
+            mask = 1.0f;
+        }
+    }
+}
+
+float3 finalColor =
+    rgb + (color - rgb) * mask;
+
+kOutput.x = clamp(finalColor.x, 0.0f, 1.0f);
+kOutput.y = clamp(finalColor.y, 0.0f, 1.0f);
+kOutput.z = clamp(finalColor.z, 0.0f, 1.0f);
 
 kOutput.w = original.w;
