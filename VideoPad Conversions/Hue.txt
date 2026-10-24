@@ -15,7 +15,6 @@ float b = kOutput.z;
 
 float hue = clamp(kFloat0, 0.0f, 360.0f);
 
-// Output channels
 float nr = r;
 float ng = g;
 float nb = b;
