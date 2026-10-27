@@ -24,3 +24,5 @@ that has the plugin in there, then save and reopen Vegas Pro)
 to drag the (Default) preset as it is less prone to crashing
 as opposed to dragging one of the presets you made. You can
 select your preset on the dropdown menu after you drag it in.
+
+There is a vibecoded fix on this page: https://jimmyhogs.com/programs/OFX/BetaFX/
