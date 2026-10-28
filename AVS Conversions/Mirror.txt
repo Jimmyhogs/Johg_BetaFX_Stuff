@@ -2,9 +2,9 @@
 =========================
 AVS Mirror by Jimmyhogs 
 =========================
-KFLOAT0 = Type (0-3)
-(Bottom, Top, Left, Right)
-KFLOAT1 = Level (0-100)
+KFLOAT0 = Type (0, 1, 2, or 3)
+(Bottom, Top, Left, Right) ^
+KFLOAT1 = Level (0 to 100)
 =========================
 */
 
