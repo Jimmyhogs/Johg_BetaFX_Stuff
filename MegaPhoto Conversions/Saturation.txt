@@ -2,9 +2,7 @@
 =========================
 MegaPhoto Saturation by Jimmyhogs
 =========================
-KFLOAT0 = Saturation
-=========================
-KFLOAT0: 0 to 100
+KFLOAT0 = Saturation (0 to 100)
 =========================
 */
 
