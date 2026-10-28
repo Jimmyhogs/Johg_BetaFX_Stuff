@@ -8,7 +8,7 @@ KFLOAT1 = Desaturate (0 to 100)
 Coordinates System Range: (0.0 to 1.0)
 =========================
 (None; Rectangle; Ellipse; Polygon)
-KFLOAT5 = Mask Shape (0.0 to 3.0) ^
+KFLOAT5 = Mask Shape ^ (0.0 to 3.0) ^
 KFLOAT6 = Top Left X (Default: 0.1)
 KFLOAT7 = Top Left Y (Default: 0.9)
 KFLOAT8 = Top Right X (Default: 0.9)
