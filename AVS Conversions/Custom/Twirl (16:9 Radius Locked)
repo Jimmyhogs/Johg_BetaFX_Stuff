@@ -1,12 +1,10 @@
 /*
-=========================
+===========================================
 AVS Twirl (16:9 Radius Locked) by Jimmyhogs
-=========================
-KFLOAT0 = Twirl Degree
-KFLOAT1 = Twirl Angle
-=========================
-KFLOAT0: 0 to 10; KFLOAT1: -360 to 360
-=========================
+===========================================
+KFLOAT0 = Twirl Degree (0 to 10)
+KFLOAT1 = Twirl Angle (-360 to 360)
+===========================================
 */
 
 float width  = (float)p_Width;
