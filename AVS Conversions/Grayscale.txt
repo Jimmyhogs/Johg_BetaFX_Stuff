@@ -2,10 +2,10 @@
 =========================
 AVS Grayscale by Jimmyhogs 
 =========================
-KFLOAT0 = Grayscale (0-100)
-KFLOAT1 = Desaturate (0-100)
+KFLOAT0 = Grayscale (0 to 100)
+KFLOAT1 = Desaturate (0 to 100)
 =========================
-Coordinates System Range: (0.0-1.0)
+Coordinates System Range: (0.0 to 1.0)
 =========================
 (None; Rectangle; Ellipse; Polygon)
 KFLOAT5 = Mask Shape (0-3) ^
