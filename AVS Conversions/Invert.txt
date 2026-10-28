@@ -2,12 +2,12 @@
 =========================
 AVS Invert by Jimmyhogs
 =========================
-KFLOAT0 = Invert (1.0)
+KFLOAT0 = Invert (0.0 or 1.0)
 =========================
-Coordinates System Range: (0.0-1.0)
+Coordinates System Range: (0.0 to 1.0)
 =========================
 (None; Rectangle; Ellipse; Polygon)
-KFLOAT5 = Mask Shape (0-3) ^
+KFLOAT5 = Mask Shape ^ (0 to 3) ^
 KFLOAT6 = Top Left X (Default: 0.1)
 KFLOAT7 = Top Left Y (Default: 0.9)
 KFLOAT8 = Top Right X (Default: 0.9)
