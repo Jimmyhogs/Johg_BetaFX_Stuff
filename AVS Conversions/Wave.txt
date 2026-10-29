@@ -1,0 +1,131 @@
+/*
+=========================
+AVS Wave by Jimmyhogs
+=========================
+KFLOAT0 = Peaks (0 to 10)
+KFLOAT1 = Amplitude (-100 to 100)
+KFLOAT2 = Speed (-100 to 100)
+KFLOAT3 = Offset (0 to 100)
+KFLOAT4 = Vertical 0; Horizontal 1 
+KFLOAT5 = Edges (-1, 0, 1)
+(Invisible, Default, Clamped)
+=========================
+*/
+
+float width = (float)p_Width;
+float height = (float)p_Height;
+
+float maxX = fmax(width - 1.0f, 0.0f);
+float maxY = fmax(height - 1.0f, 0.0f);
+
+int direction = clamp((int)floor(kFloat4 + 0.5f), 0, 1);
+int edgeMode = clamp((int)floor(kFloat5 + 0.5f), -1, 1);
+
+float peaks = fmax(kFloat0, 0.0f);
+
+float amplitudeMultiplier = (direction == 0)
+    ? 2.5625f
+    : 1.44140625f;
+
+float amplitude = kFloat1 * amplitudeMultiplier;
+float speed = kFloat2;
+
+float internalOffset = (direction == 0)
+    ? 50.20f
+    : 50.10f;
+
+float offset = kFloat3 + internalOffset;
+offset = offset - 100.0f * floor(offset / 100.0f);
+
+float2 pos = (float2)((float)x, (float)y);
+float2 samplePos = pos;
+
+float frequency = 6.28318530718f * peaks;
+float offsetPhase = (offset / 100.0f) * 6.28318530718f;
+
+float speedMultiplier = 0.62831853f;
+
+float timePhase = (direction == 0 ? -1.0f : 1.0f)
+                * kTime * speed * speedMultiplier;
+
+float phase = timePhase + offsetPhase;
+
+if (direction == 0)
+{
+    float normalizedY = pos.y / fmax(height, 1.0f);
+
+    float wave = sin(
+        normalizedY * frequency + phase
+    );
+
+    samplePos.x += wave * amplitude;
+}
+else
+{
+    float normalizedX = pos.x / fmax(width, 1.0f);
+
+    float wave = sin(
+        normalizedX * frequency + phase
+    );
+
+    samplePos.y += wave * amplitude;
+}
+
+if (edgeMode == -1)
+{
+    if (samplePos.x < 0.0f ||
+        samplePos.x > maxX ||
+        samplePos.y < 0.0f ||
+        samplePos.y > maxY)
+    {
+        kOutput = (float4)(0.0f);
+    }
+    else
+    {
+        kReadIndex = samplePos;
+        kRead();
+    }
+}
+else
+{
+    if (edgeMode == 0)
+    {
+        float edgeMargin = fmax(fabs(amplitude) - 0.5f, 0.0f);
+
+        float axisPosition = (direction == 0)
+            ? samplePos.x
+            : samplePos.y;
+
+        float axisMaximum = (direction == 0)
+            ? maxX
+            : maxY;
+
+        if (axisPosition < edgeMargin)
+        {
+            axisPosition = 0.5f * (
+                axisPosition + edgeMargin
+            );
+        }
+        else if (axisPosition > axisMaximum - edgeMargin)
+        {
+            axisPosition = 0.5f * (
+                axisPosition + axisMaximum - edgeMargin
+            );
+        }
+
+        if (direction == 0)
+        {
+            samplePos.x = axisPosition;
+        }
+        else
+        {
+            samplePos.y = axisPosition;
+        }
+    }
+
+    samplePos.x = clamp(samplePos.x, 0.0f, maxX);
+    samplePos.y = clamp(samplePos.y, 0.0f, maxY);
+
+    kReadIndex = samplePos;
+    kRead();
+}
