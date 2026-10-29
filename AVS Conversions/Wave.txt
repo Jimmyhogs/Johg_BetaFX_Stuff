@@ -27,7 +27,12 @@ float amplitudeMultiplier = (direction == 0)
     ? 2.5625f
     : 1.44140625f;
 
-float amplitude = kFloat1 * amplitudeMultiplier;
+float resolutionScale = (direction == 0)
+    ? width / 2560.0f
+    : height / 1440.0f;
+
+float amplitude = kFloat1 * amplitudeMultiplier * resolutionScale;
+
 float speed = kFloat2;
 
 float internalOffset = (direction == 0)
@@ -90,7 +95,10 @@ else
 {
     if (edgeMode == 0)
     {
-        float edgeMargin = fmax(fabs(amplitude) - 0.5f, 0.0f);
+        float edgeMargin = fmax(
+            fabs(amplitude) - 0.5f * resolutionScale,
+            0.0f
+        );
 
         float axisPosition = (direction == 0)
             ? samplePos.x
