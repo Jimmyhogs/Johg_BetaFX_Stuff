@@ -7,62 +7,144 @@ KFLOAT1 = Twirl Angle (-360 to 360)
 =========================
 */
 
-float width  = (float)p_Width;
+float width = (float)p_Width;
 float height = (float)p_Height;
 
-float2 center = (float2)(width * 0.5f, height * 0.5f);
-float2 pos = (float2)((float)x, (float)y);
-float2 delta = pos - center;
+float2 center = (float2)(
+    width * 0.5f,
+    height * 0.5f
+);
 
-float targetAspect = 16.0f / 9.0f;
-float actualAspect = width / fmax(height, 0.001f);
-
-float2 aspectScale;
-
-if (actualAspect > targetAspect) {
-    aspectScale = (float2)(1.0f, actualAspect / targetAspect);
-} else {
-    aspectScale = (float2)(targetAspect / actualAspect, 1.0f);
-}
-
-float2 scaledDelta = delta * aspectScale;
-
-float radius = length(scaledDelta);
-float baseRadius = length(center * aspectScale);
-
-float effectiveRadius = fmax(baseRadius, 0.001f);
-
-float r = clamp(radius / effectiveRadius, 0.0f, 1.0f);
+float2 maxPos = (float2)(
+    width - 1.0f,
+    height - 1.0f
+);
 
 float soften = clamp(kFloat0, -10.0f, 10.0f);
+
 float falloffPower = 1.0f;
 
-if (soften > 0.0f) {
+if (soften > 0.0f)
+{
     falloffPower = fmax(soften, 1.0f);
 }
 
-float falloff = pow(fmax(1.0f - r, 0.0f), falloffPower);
-falloff *= (r < 1.0f) ? 1.0f : 0.0f;
-
 float strength = -kFloat1 * 0.01745329252f;
-float angle = strength * falloff;
 
-float s = sin(angle);
-float c = cos(angle);
+float baseRadius = length(center);
+float effectiveRadius = fmax(baseRadius, 0.001f);
 
-float2 rotated = (float2)(
-    scaledDelta.x * c - scaledDelta.y * s,
-    scaledDelta.x * s + scaledDelta.y * c
-);
+float4 accumulated = (float4)(0.0f);
 
-float2 samplePos = center + rotated / aspectScale;
+for (int sy = 0; sy < 3; sy++)
+{
+    for (int sx = 0; sx < 3; sx++)
+    {
+        float2 offset = (float2)(
+            ((float)sx - 1.0f) / 3.0f,
+            ((float)sy - 1.0f) / 3.0f
+        );
 
-if (samplePos.x < 0.0f ||
-    samplePos.y < 0.0f ||
-    samplePos.x >= width ||
-    samplePos.y >= height) {
-    kOutput = (float4)(0.0f);
-} else {
-    kReadIndex = samplePos;
-    kRead();
+        float2 pos = (float2)(
+            (float)x,
+            (float)y
+        ) + offset;
+
+        float2 delta = pos - center;
+
+        float radius = length(delta);
+
+        float r = clamp(
+            radius / effectiveRadius,
+            0.0f,
+            1.0f
+        );
+
+        float falloff = pow(
+            fmax(1.0f - r, 0.0f),
+            falloffPower
+        );
+
+        falloff *= (r < 1.0f) ? 1.0f : 0.0f;
+
+        float angle = strength * falloff;
+
+        float s = sin(angle);
+        float c = cos(angle);
+
+        float2 rotated = (float2)(
+            delta.x * c - delta.y * s,
+            delta.x * s + delta.y * c
+        );
+
+        float2 samplePos = center + rotated;
+
+        if (samplePos.x >= 0.0f &&
+            samplePos.y >= 0.0f &&
+            samplePos.x < width &&
+            samplePos.y < height)
+        {
+            float2 p0 = floor(samplePos);
+
+            float2 fraction = samplePos - p0;
+
+            float2 p1 = fmin(
+                p0 + (float2)(1.0f, 0.0f),
+                maxPos
+            );
+
+            float2 p2 = fmin(
+                p0 + (float2)(0.0f, 1.0f),
+                maxPos
+            );
+
+            float2 p3 = fmin(
+                p0 + (float2)(1.0f, 1.0f),
+                maxPos
+            );
+
+            float4 a;
+            float4 b;
+            float4 c0;
+            float4 d;
+
+            kReadIndex = p0;
+            kRead();
+            a = kOutput;
+
+            kReadIndex = p1;
+            kRead();
+            b = kOutput;
+
+            kReadIndex = p2;
+            kRead();
+            c0 = kOutput;
+
+            kReadIndex = p3;
+            kRead();
+            d = kOutput;
+
+            float4 top = mix(
+                a,
+                b,
+                fraction.x
+            );
+
+            float4 bottom = mix(
+                c0,
+                d,
+                fraction.x
+            );
+
+            float4 sampled = mix(
+                top,
+                bottom,
+                fraction.y
+            );
+
+            accumulated += sampled;
+        }
+    }
 }
+
+kOutput = accumulated / 9.0f;
