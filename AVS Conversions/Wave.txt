@@ -2,7 +2,7 @@
 =========================
 AVS Wave by Jimmyhogs
 =========================
-KFLOAT0 = Peaks (0 to 10)
+KFLOAT0 = Peaks (0 to 20)
 KFLOAT1 = Amplitude (-100 to 100)
 KFLOAT2 = Speed (-100 to 100)
 KFLOAT3 = Offset (0 to 100)
