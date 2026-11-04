@@ -1,6 +1,7 @@
 /*
 =========================
-AVS Mirror by Jimmyhogs (Default Values Below)
+AVS Mirror by Jimmyhogs
+(Default Values Below)
 =========================
 KFLOAT0 = Type (0, 1, 2, or 3)
 (Bottom, Top, Left, Right) ^
