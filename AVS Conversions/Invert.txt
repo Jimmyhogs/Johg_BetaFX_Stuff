@@ -5,6 +5,7 @@ AVS Invert by Jimmyhogs
 KFLOAT0 = Invert (0.0 to 1.0)
 =========================
 Coordinates System Range: (0.0 to 1.0)
+(Preset in this context means default)
 =========================
 (None; Rectangle; Ellipse; Polygon)
 KFLOAT5 = Mask Shape ^ (0, 1, 2, or 3)
