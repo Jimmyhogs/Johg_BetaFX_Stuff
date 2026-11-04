@@ -147,5 +147,5 @@ else
     kRead();
 }
 /*
-Go to top of the script to see the parameters and linking values
+Go to the top of the script to see the parameters and linking values
 */
