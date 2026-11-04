@@ -1,16 +1,15 @@
 /* 
 =========================
-AVS Twirl by Jimmyhogs
+AVS Twirl by Jimmyhogs (; # = Default)
 =========================
-KFLOAT0 = Twirl Degree (0 to 10; Def: 2)
-KFLOAT1 = Twirl Angle (-360 to 360; Def: 90)
+KFLOAT0 = Twirl Degree (0 to 10; 2)
+KFLOAT1 = Twirl Angle (-360 to 360; 90)
 =========================
 */
 
 float width  = (float)p_Width;
 float height = (float)p_Height;
 
-// Fixed center of the image
 float2 center = (float2)(width * 0.5f, height * 0.5f);
 float2 pos = (float2)((float)x, (float)y);
 float2 delta = pos - center;
@@ -18,15 +17,10 @@ float2 delta = pos - center;
 float radius = length(delta);
 float baseRadius = length(center);
 
-// Original twirl size
 float effectiveRadius = fmax(baseRadius, 0.001f);
 
-// Normalized radial distance
 float r = clamp(radius / effectiveRadius, 0.0f, 1.0f);
 
-// kFloat0:
-// Negative values and zero preserve the default shape.
-// Positive values retain the previous sharpening formula.
 float soften = clamp(kFloat0, -10.0f, 10.0f);
 float falloffPower = 1.0f;
 
@@ -37,7 +31,6 @@ if (soften > 0.0f) {
 float falloff = pow(fmax(1.0f - r, 0.0f), falloffPower);
 falloff *= (r < 1.0f) ? 1.0f : 0.0f;
 
-// Reverse angle direction using kFloat1
 float strength = -kFloat1 * 0.01745329252f;
 float angle = strength * falloff;
 
@@ -51,7 +44,6 @@ float2 rotated = (float2)(
 
 float2 samplePos = center + rotated;
 
-// Transparent edges: no clamping, mirroring, or repeating
 if (samplePos.x < 0.0f ||
     samplePos.y < 0.0f ||
     samplePos.x >= width ||
