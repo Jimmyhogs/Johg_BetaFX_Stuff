@@ -1,13 +1,9 @@
 /* 
 =========================
-AVS Twirl by Jimmyhogs (Default Values Below)
+AVS Twirl by Jimmyhogs
 =========================
-KFLOAT0 = Twirl Degree (0 to 10)
-KFLOAT1 = Twirl Angle (-360 to 360)
-=========================
-Default Values
-K0 = 2
-K1 = 90
+KFLOAT0 = Twirl Degree (0 to 10; Def: 2)
+KFLOAT1 = Twirl Angle (-360 to 360; Def: 90)
 =========================
 */
 
