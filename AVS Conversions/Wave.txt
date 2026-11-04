@@ -146,3 +146,6 @@ else
     kReadIndex = samplePos;
     kRead();
 }
+/*
+Go to top of the script to see the parameters and linking values
+*/
