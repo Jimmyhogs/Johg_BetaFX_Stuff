@@ -5,20 +5,20 @@ AVS Invert by Jimmyhogs
 KFLOAT0 = Invert (0.0 to 1.0)
 =========================
 Coordinates System Range: (0.0 to 1.0)
-(Preset in this context means default)
+("Def" is short for default)
 =========================
 (None, Rectangle, Ellipse, Polygon)
 KFLOAT5 = Mask Shape ^ (0, 1, 2, or 3)
-KFLOAT6 = Top Left X (Preset 0.1)
-KFLOAT7 = Top Left Y (Preset 0.9)
-KFLOAT8 = Top Right X (Preset 0.9)
-KFLOAT9 = Top Right Y (Preset 0.9)
-KFLOAT10 = Polygon Top X (Preset 0.45)
-KFLOAT11 = Polygon Top Y (Preset 0.9)
-KFLOAT12 = Bottom Left X (Preset 0.1)
-KFLOAT13 = Bottom Left Y (Preset 0.1)
-KFLOAT14 = Bottom Right X (Preset 0.9)
-KFLOAT15 = Bottom Right Y (Preset 0.1)
+KFLOAT6 = Top Left X (Def: 0.1)
+KFLOAT7 = Top Left Y (Def: 0.9)
+KFLOAT8 = Top Right X (Def: 0.9)
+KFLOAT9 = Top Right Y (Def: 0.9)
+KFLOAT10 = Polygon Top X (Def: 0.45)
+KFLOAT11 = Polygon Top Y (Def: 0.9)
+KFLOAT12 = Bottom Left X (Def: 0.1)
+KFLOAT13 = Bottom Left Y (Def: 0.1)
+KFLOAT14 = Bottom Right X (Def: 0.9)
+KFLOAT15 = Bottom Right Y (Def: 0.1)
 =========================
 */
 
