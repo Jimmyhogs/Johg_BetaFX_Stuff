@@ -3,6 +3,15 @@ This repository is where I am gonna post my BetaFX Kernel stuff since pastebin's
 
 For any of these scripts, make sure you click on the copy icon, then go to Vegas and ctrl+v on "Script Input" inside of BetaFX Custom OpenCL Kernel.
 
+-------------------------------------------------------------------
+
+I also do have these scripts uploaded as .xml OFX preset files that has
+the default parameters of said converted effect written in the file below
+
+https://jimmyhogs.com/conversions/BetaFX_Custom_OpenCL_Kernel/
+
+-------------------------------------------------------------------
+
 The OFX plugin can be downloaded here: https://github.com/boundless-beta/openfx-betafx/releases
 
 -------------------------------------------------------------------
