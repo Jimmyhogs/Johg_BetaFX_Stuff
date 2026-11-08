@@ -9,6 +9,7 @@ KFLOAT2 = Blur Mode (-1 or 0)
 (-1 = No Mirror Blur, 0 = AVS Mirror Blur)
 =========================
 */
+
 float width = (float)p_Width;
 float height = (float)p_Height;
 
