@@ -5,10 +5,10 @@ AVS Mirror by Jimmyhogs
 KFLOAT0 = Type (0, 1, 2, or 3)    
 (Bottom, Top, Left, Right) ^         
 KFLOAT1 = Level (0 to 100; Default 50)
+KFLOAT2 = Blur Mode (-1 or 0)               
+(-1 = No Mirror Blur, 0 = AVS Mirror Blur)
 =========================
-*/
-
-float width = (float)p_Width;
+*/float width = (float)p_Width;
 float height = (float)p_Height;
 
 float maxX = fmax(width - 1.0f, 1.0f);
@@ -79,7 +79,7 @@ samplePos.y = clamp(samplePos.y, 0.0f, maxY);
 
 progress = clamp(progress, 0.0f, 1.0f);
 
-if (progress <= 0.0f) {
+if (progress <= 0.0f || kFloat2 < -0.5f) {
     kReadIndex = samplePos;
     kRead();
 }
